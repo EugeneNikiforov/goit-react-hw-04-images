@@ -1,31 +1,26 @@
-import { Component } from 'react';
+import React from 'react';
 import PropTypes from "prop-types";
 import Modal from '../Modal/Modal';
 import css from './ImageGalleryItem.module.scss';
 
 
-export default class ImageGalleryItem extends Component {
-    state = {
-        showModal: false,
+export default function ImageGalleryItem({ bigPhoto, smallPhoto, tag }) {
+    const [showModal, setShowModal] = React.useState(false);
+
+    const runModal = () => {
+        setShowModal((prev) => !prev);
     };
-    runModal = () => {
-        this.setState((prevState) => {
-            return { showModal: !prevState.showModal };
-        });
-    };
-    render() {
-        const { bigPhoto, smallPhoto, tag } = this.props;
-        return (
-            <div className={css.imageGalleryItem}>
-                <img className={css.imageGalleryItem_image} onClick={this.runModal} src={smallPhoto} alt={tag} />
-                {this.state.showModal && (
-                    <Modal onClose={this.runModal}>
-                        <img src={bigPhoto} alt={tag} />
-                    </Modal>
-                )}
-            </div>
-        );
-    }
+    // const { bigPhoto, smallPhoto, tag } = this.props;
+    return (
+        <div className={css.imageGalleryItem}>
+            <img className={css.imageGalleryItem_image} onClick={runModal} src={smallPhoto} alt={tag} />
+            {showModal && (
+                <Modal onClose={runModal}>
+                    <img src={bigPhoto} alt={tag} />
+                </Modal>
+            )}
+        </div>
+    );
 };
 
 ImageGalleryItem.propTypes = {

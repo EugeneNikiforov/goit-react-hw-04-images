@@ -1,46 +1,43 @@
-import { Component } from 'react';
+import React from 'react';
 import ImageGallery from './ImageGallery/ImageGallery';
 import Searchbar from './Searchbar/Searchbar';
 import css from './App.module.scss';
 
-export default class App extends Component {
-  state = {
-    searchValue: "",
-    images: [],
-    loading: false,
-    page: 1
-  };
-  handleFormSubmit = (searchValue) => {
-    this.setState({ searchValue, page: 1, images: [] });
-  };
-
-  componentDidUpdate(prevProps, prevState) {
-        if (prevState.page !== this.state.page || prevState.searchValue !== this.state.searchValue) {
-            this.getImageFetch();
-            return;
-        }
+export default function App() {
+  const [searchValue, setSearchValue] = React.useState("");
+  const [images, setImages] = React.useState([]);
+  const [loading, setLoading] = React.useState(false);
+  const [page, setPage] = React.useState(1);
+ 
+  const handleFormSubmit = (e) => {
+    setSearchValue(e);
+    setPage(1);
+    setImages([]);
   };
 
-  loadMoreImages = () => {
-        this.setState((prev) => {
-            return {
-                page: prev.page + 1,
-            };
-        });
+  React.useEffect(() => {
+    if (searchValue) {
+      getImageFetch();
+      return;
     };
+  }, [searchValue, page]);
+
+  const loadMoreImages = () => {
+    setPage((prev) => prev + 1);
+  };
   
-  getImageFetch = () => {
-        const namePic = this.state.searchValue;
-        const { page } = this.state;
+  const getImageFetch = () => {
+        const namePic = searchValue;
+        // const { page } = page;
         const storageKey = `32864806-51f72b6a703d7e1693286dbfa`;
-    this.setState({ loading: true });
+    setLoading(true);
         fetch(
             `https://pixabay.com/api?q=${namePic}&page=${page}&key=${storageKey}&image_type=photo&orientation=horizontal&per_page=12`
         ).then((response) => {
             if (response.ok) {
               return response.json().then(({ hits }) => {
-                this.setState(({ images }) => ({
-                        images: [...images, ...hits],}));
+                // console.log(hits);
+                setImages((prevImages) => ([...prevImages, ...hits]));
             if (hits.length === 0) {
                 alert(`Images are over!`);
             }
@@ -49,19 +46,19 @@ export default class App extends Component {
                 top: document.documentElement.scrollHeight,
                 behavior: "smooth",
             });
-        }).catch(error => (console.log(error))).finally(() => this.setState({ loading: false }));
-        }
-       
+        }).catch(error => (console.log(error))).finally(() => setLoading(false));}
         });
     };
 
-  render() {
   return (
-    <div className={css.app}
-    >
-      <Searchbar onSubmit={this.handleFormSubmit} />
-      {this.state.searchValue !== "" && <ImageGallery loadMoreImages={this.loadMoreImages} images={this.state.images} loading={this.state.loading} page={this.state.page} />}
+    <div className={css.app}>
+      <Searchbar onSubmit={handleFormSubmit} />
+      {searchValue !== "" &&
+        <ImageGallery loadMoreImages={loadMoreImages}
+          images={images}
+          loading={loading}
+          page={page} />
+          }
     </div>
-    );
-    }
+  );
 };
