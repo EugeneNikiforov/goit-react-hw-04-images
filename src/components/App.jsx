@@ -36,7 +36,6 @@ export default function App() {
         ).then((response) => {
             if (response.ok) {
               return response.json().then(({ hits }) => {
-                // console.log(hits);
                 setImages((prevImages) => ([...prevImages, ...hits]));
             if (hits.length === 0) {
                 alert(`Images are over!`);
