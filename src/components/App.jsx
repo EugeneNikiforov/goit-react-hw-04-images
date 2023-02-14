@@ -16,17 +16,7 @@ export default function App() {
   };
 
   React.useEffect(() => {
-    if (searchValue) {
-      getImageFetch();
-      return;
-    };
-  }, [searchValue, page]);
-
-  const loadMoreImages = () => {
-    setPage((prev) => prev + 1);
-  };
-  
-  const getImageFetch = () => {
+    const getImageFetch = () => {
         const namePic = searchValue;
         // const { page } = page;
         const storageKey = `32864806-51f72b6a703d7e1693286dbfa`;
@@ -48,6 +38,15 @@ export default function App() {
         }).catch(error => (console.log(error))).finally(() => setLoading(false));}
         });
     };
+    if (searchValue) {
+      getImageFetch(searchValue, page);
+      return;
+    };
+  }, [searchValue, page]);
+
+  const loadMoreImages = () => {
+    setPage((prev) => prev + 1);
+  };
 
   return (
     <div className={css.app}>
